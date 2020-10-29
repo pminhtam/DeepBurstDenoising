@@ -6,3 +6,7 @@ img/
 log/
 model
 .idea
+checkpoint/
+*.pth
+*.pt
+*.tar
