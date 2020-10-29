@@ -1,0 +1,8 @@
+**/__pycache__/
+
+.*
+!.gitignore
+img/
+log/
+model
+.idea
