@@ -6,12 +6,10 @@ from data_loader import SingleLoader,MultiLoader
 from torch.utils.data import DataLoader
 import torch.optim as optim
 
-def train_single(noise_dir,gt_dir,image_size,num_workers,batch_size,n_epoch,checkpoint,resume):
+def train_single(noise_dir,gt_dir,image_size,num_workers,batch_size,n_epoch,checkpoint,resume,loss_every,save_every):
     if not os.path.isdir(checkpoint):
         os.mkdir(checkpoint)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    loss_every = 1
-    save_every = 1
     dataset = SingleLoader(noise_dir=noise_dir,gt_dir=gt_dir,image_size=image_size)
     data_loader = DataLoader(dataset, batch_size=batch_size,shuffle=True, num_workers=num_workers)
     model = SFD_C().to(device)
@@ -47,12 +45,10 @@ def train_single(noise_dir,gt_dir,image_size,num_workers,batch_size,n_epoch,chec
             torch.save(save_dict, filename)
             # torch.save(model.state_dict(), filename)
 
-def train_multi(noise_dir,gt_dir,image_size,num_workers,batch_size,n_epoch,checkpoint,resume):
+def train_multi(noise_dir,gt_dir,image_size,num_workers,batch_size,n_epoch,checkpoint,resume,loss_every,save_every):
     if not os.path.isdir(checkpoint):
         os.mkdir(checkpoint)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    loss_every = 1
-    save_every = 1
     dataset = MultiLoader(noise_dir=noise_dir,gt_dir=gt_dir,image_size=image_size)
     data_loader = DataLoader(dataset, batch_size=batch_size,shuffle=True, num_workers=num_workers)
     model_single = SFD_C().to(device)
@@ -114,8 +110,10 @@ if __name__ == "__main__":
     parser.add_argument('--gt_dir','-g',  default='/home/dell/Downloads/0001_GT_SRGB', help='path to groud true image file')
     parser.add_argument('--image_size','-sz' , type=int,default=256, help='size of image')
     parser.add_argument('--num_workers', '-nw', default=4, type=int, help='number of workers in data loader')
-    parser.add_argument('--batch_size', '-bz', default=2, type=int, help='number of workers in data loader')
+    parser.add_argument('--batch_size', '-bs', default=2, type=int, help='number of workers in data loader')
     parser.add_argument('--n_epoch', '-ep', default=8, type=int, help='number of workers in data loader')
+    parser.add_argument('--loss_every', '-le', default=100, type=int, help='number of inter to print loss')
+    parser.add_argument('--save_every', '-se', default=10, type=int, help='number of epoch to save checkpoint')
     parser.add_argument('--checkpoint', '-ckpt', type=str, default='checkpoint',
                         help='the folder checkpoint to save')
     parser.add_argument('--resume', '-r', type=str, default='',
@@ -124,9 +122,9 @@ if __name__ == "__main__":
     args = parser.parse_args()
     #
     if args.type_model == 'single':
-        train_single(args.noise_dir,args.gt_dir,args.image_size,args.num_workers,args.batch_size,args.n_epoch,args.checkpoint,args.resume)
+        train_single(args.noise_dir,args.gt_dir,args.image_size,args.num_workers,args.batch_size,args.n_epoch,args.checkpoint,args.resume,args.loss_every,args.save_every)
     elif args.type_model == 'multi':
-        train_multi(args.noise_dir,args.gt_dir,args.image_size,args.num_workers,args.batch_size,args.n_epoch,args.checkpoint,args.resume)
+        train_multi(args.noise_dir,args.gt_dir,args.image_size,args.num_workers,args.batch_size,args.n_epoch,args.checkpoint,args.resume,args.loss_every,args.save_every)
 
 
 
