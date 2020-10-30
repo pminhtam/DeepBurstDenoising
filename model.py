@@ -99,8 +99,8 @@ class MFD_C(nn.Module):
 
     def forward(self, x, mf1, mf2,mf3,mf4):
         out=self.S1(x)
-        print(out.size())
-        print(mf1.size())
+        # print(out.size())
+        # print(mf1.size())
         mf1=self.M1(torch.cat([out,mf1],dim=1))
         out=self.S2(out)
         mf2=self.M2(torch.cat([out,mf1,mf2],dim=1))
