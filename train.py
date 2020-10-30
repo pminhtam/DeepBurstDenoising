@@ -66,14 +66,14 @@ def train_multi(noise_dir,gt_dir,image_size,num_workers,batch_size,n_epoch,check
         for step, (image_noise, image_gt) in enumerate(data_loader):
             image_noise_batch = image_noise.to(device)
             image_gt = image_gt.to(device)
-            print(image_noise_batch.size())
+            # print(image_noise_batch.size())
             batch_size_i = image_noise_batch.size()[0]
             mfinit1, mfinit2, mfinit3 = torch.zeros(3, batch_size, 64, image_size, image_size).to(device)
             mfinit4 = torch.zeros(batch_size, 3, image_size, image_size).to(device)
             i = 0
             for i_burst in range(batch_size_i):
                 frame = image_noise_batch[:,i_burst,:,:,:]
-                print(frame.size())
+                # print(frame.size())
                 if i == 0:
                     i += 1
                     dframe, mf1, mf2, mf3, mf4 = model(
