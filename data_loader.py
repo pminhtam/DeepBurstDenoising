@@ -153,18 +153,35 @@ class MultiLoader(data.Dataset):
         Returns:
             tuple: (image, groundtrue) where image is a noisy version of groundtrue
         """
+
+
         path = self.noise_path[index]
         list_path = sorted(glob.glob(path+"/*"))[:8]
-        image_noise = [self.transforms(Image.open(img_path).convert('RGB')) for img_path in list_path]
 
-        image_noise_burst = torch.stack(image_noise, dim=0)
 
         name_image = self.noise_path[index].split("/")[-1].replace("NOISY_", "GT_")
         image_gt = Image.open(os.path.join(self.gt_dir, name_image,name_image+"_001.PNG")).convert('RGB')
-
-
         image_gt = self.transforms(image_gt)
-        image_noise_burst_crop, image_gt_crop = random_cut_burst(image_noise_burst,image_gt,w = self.image_size)
+        ############
+        # Choose randcrop
+        w = self.image_size
+        h = self.image_size
+        nw = image_gt.size(-1) - w
+        nh = image_gt.size(-2) - h
+        if nw < 0 or nh < 0:
+            raise RuntimeError("Image is to small {} for the desired size {}". \
+                               format((image_gt.size(-1), image_gt.size(-2)), (w, h))
+                               )
+
+        idx_w = np.random.choice(nw + 1)
+        idx_h = np.random.choice(nh + 1)
+        ##########
+        image_gt_crop = image_gt[:,idx_h:(idx_h+h), idx_w:(idx_w+w)]
+
+        image_noise = [self.transforms(Image.open(img_path).convert('RGB'))[:,idx_h:(idx_h+h), idx_w:(idx_w+w)] for img_path in list_path]
+        image_noise_burst_crop = torch.stack(image_noise, dim=0)
+
+        # image_noise_burst_crop, image_gt_crop = random_cut_burst(image_noise_burst,image_gt,w = self.image_size)
         return image_noise_burst_crop, image_gt_crop
 
     def __len__(self):
