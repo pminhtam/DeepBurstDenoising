@@ -11,6 +11,16 @@ Unofficial implement of **Deep Burst Denoising**
 Use [SIDD dataset](https://www.eecs.yorku.ca/~kamel/sidd/dataset.php). 
 Have two folder : noisy image and ground true image
 
+Input folder have struct :
+```
+/
+    /noise
+        /[scene_instance]
+            /[image].PNG
+    /gt
+        /[scene_instance]
+            /[image].PNG
+```
 # Train
 ## Train Single image 
 `` python train.py -n /home/dell/Downloads/FullTest/noisy -g /home/dell/Downloads/FullTest/clean -sz 256 -nw 8 -bs 2 -ep 100 -se 100 --type single -r SFD_C_99.pth.tar``
