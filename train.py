@@ -66,25 +66,27 @@ def train_multi(noise_dir,gt_dir,image_size,num_workers,batch_size,n_epoch,check
         for step, (image_noise, image_gt) in enumerate(data_loader):
             image_noise_batch = image_noise.to(device)
             image_gt = image_gt.to(device)
+            # print("image_noise_batch  : ",image_noise_batch.size())
+            # print("image_gt   : ",image_gt.size())
             # print(image_noise_batch.size())
             batch_size_i = image_noise_batch.size()[0]
-            mfinit1, mfinit2, mfinit3 = torch.zeros(3, batch_size, 64, image_size, image_size).to(device)
-            mfinit4 = torch.zeros(batch_size, 3, image_size, image_size).to(device)
+            mfinit1, mfinit2, mfinit3,mfinit4,mfinit5,mfinit6,mfinit7 = torch.zeros(7, batch_size_i, 64, image_size, image_size).to(device)
+            mfinit8 = torch.zeros(batch_size_i, 3, image_size, image_size).to(device)
             i = 0
             for i_burst in range(batch_size_i):
                 frame = image_noise_batch[:,i_burst,:,:,:]
-                # print(frame.size())
+                # print("frame size  ",frame.size())
                 if i == 0:
                     i += 1
-                    dframe, mf1, mf2, mf3, mf4 = model(
-                        frame, mfinit1, mfinit2, mfinit3, mfinit4)
+                    dframe, mf1, mf2, mf3, mf4,mf5, mf6, mf7, mf8 = model(
+                        frame, mfinit1, mfinit2, mfinit3, mfinit4,mfinit5,mfinit6,mfinit7,mfinit8)
                     loss_sfd = loss_func(dframe, image_gt)
-                    loss_mfd = loss_func(mf4, image_gt)
+                    loss_mfd = loss_func(mf8, image_gt)
 
                 else:
-                    dframe, mf1, mf2, mf3, mf4= model(frame, mf1, mf2, mf3, mf4)
+                    dframe, mf1, mf2, mf3, mf4,mf5, mf6, mf7, mf8= model(frame, mf1, mf2, mf3, mf4,mf5, mf6, mf7, mf8)
                     loss_sfd += loss_func(dframe, image_gt)
-                    loss_mfd += loss_func(mf4, image_gt)
+                    loss_mfd += loss_func(mf8, image_gt)
             loss = loss_sfd + loss_mfd
             if (step + 1) % loss_every == 0:
                 print('multi t = %d, loss = %.4f' % (step + 1, loss.data))
@@ -106,13 +108,13 @@ def train_multi(noise_dir,gt_dir,image_size,num_workers,batch_size,n_epoch,check
 if __name__ == "__main__":
     # argparse
     parser = argparse.ArgumentParser(description='parameters for training')
-    parser.add_argument('--noise_dir','-n', default='/home/dell/Downloads/0001_NOISY_SRGB', help='path to noise image file')
-    parser.add_argument('--gt_dir','-g',  default='/home/dell/Downloads/0001_GT_SRGB', help='path to groud true image file')
+    parser.add_argument('--noise_dir','-n', default='/home/dell/Downloads/noise', help='path to noise image file')
+    parser.add_argument('--gt_dir','-g',  default='/home/dell/Downloads/gt', help='path to groud true image file')
     parser.add_argument('--image_size','-sz' , type=int,default=256, help='size of image')
-    parser.add_argument('--num_workers', '-nw', default=4, type=int, help='number of workers in data loader')
+    parser.add_argument('--num_workers', '-nw', default=2, type=int, help='number of workers in data loader')
     parser.add_argument('--batch_size', '-bs', default=2, type=int, help='number of workers in data loader')
     parser.add_argument('--n_epoch', '-ep', default=8, type=int, help='number of workers in data loader')
-    parser.add_argument('--loss_every', '-le', default=100, type=int, help='number of inter to print loss')
+    parser.add_argument('--loss_every', '-le', default=1, type=int, help='number of inter to print loss')
     parser.add_argument('--save_every', '-se', default=10, type=int, help='number of epoch to save checkpoint')
     parser.add_argument('--checkpoint', '-ckpt', type=str, default='checkpoint',
                         help='the folder checkpoint to save')

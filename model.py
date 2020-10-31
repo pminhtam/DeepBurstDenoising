@@ -29,14 +29,14 @@ class SFD_C(nn.Module):
         self.layer1=CONV_BN_RELU(in_channels=in_channels, out_channels=64, kernel_size=3, stride=1, padding=1)
         self.layer2=CONV_BN_RELU(in_channels=64, out_channels=64, kernel_size=3, stride=1, padding=1)
         self.layer3=CONV_BN_RELU(in_channels=64, out_channels=64, kernel_size=3, stride=1, padding=1)
-        # self.layer4=CONV_BN_RELU(in_channels=64, out_channels=64, kernel_size=3, stride=1, padding=1)
+        self.layer4=CONV_BN_RELU(in_channels=64, out_channels=64, kernel_size=3, stride=1, padding=1)
 
-        # self.layer5=CONV_BN_RELU(in_channels=64, out_channels=64, kernel_size=3, stride=1, padding=1)
-        # self.layer6=CONV_BN_RELU(in_channels=64, out_channels=64, kernel_size=3, stride=1, padding=1)
-        # self.layer7=CONV_BN_RELU(in_channels=64, out_channels=64, kernel_size=3, stride=1, padding=1)
-        #
-        # self.layer8=nn.Conv2d(64,out_channels,3,stride=1,padding=1)
-        self.layer4=nn.Conv2d(64,out_channels,3,stride=1,padding=1)
+        self.layer5=CONV_BN_RELU(in_channels=64, out_channels=64, kernel_size=3, stride=1, padding=1)
+        self.layer6=CONV_BN_RELU(in_channels=64, out_channels=64, kernel_size=3, stride=1, padding=1)
+        self.layer7=CONV_BN_RELU(in_channels=64, out_channels=64, kernel_size=3, stride=1, padding=1)
+
+        self.layer8=nn.Conv2d(64,out_channels,3,stride=1,padding=1)
+        # self.layer4=nn.Conv2d(64,out_channels,3,stride=1,padding=1)
         #self.layer9=nn.BatchNorm2d(1)
     
     def forward(self, x):
@@ -44,10 +44,10 @@ class SFD_C(nn.Module):
         out=self.layer2(out)
         out=self.layer3(out)
         out=self.layer4(out)
-        # out=self.layer5(out)
-        # out=self.layer6(out)
-        # out=self.layer7(out)
-        # out=self.layer8(out)
+        out=self.layer5(out)
+        out=self.layer6(out)
+        out=self.layer7(out)
+        out=self.layer8(out)
         #out=self.layer9(out) no BN at the end, no res learning
         #out += x
         return out
@@ -70,34 +70,34 @@ class MFD_C(nn.Module):
         self.S2=SFD.layer2
         self.S3=SFD.layer3
         self.S4=SFD.layer4
-        # self.S5=SFD.layer5
-        # self.S6=SFD.layer6
-        # self.S7=SFD.layer7
-        # self.S8=SFD.layer8
+        self.S5=SFD.layer5
+        self.S6=SFD.layer6
+        self.S7=SFD.layer7
+        self.S8=SFD.layer8
         #self.S9=SFD.layer9
         
         self.M1=CONV_BN_RELU(in_channels=128, out_channels=64, kernel_size=3, stride=1, padding=1)
         self.M2=CONV_BN_RELU(in_channels=192, out_channels=64, kernel_size=3, stride=1, padding=1) 
         self.M3=CONV_BN_RELU(in_channels=192, out_channels=64, kernel_size=3, stride=1, padding=1)        
-        # self.M4=CONV_BN_RELU(in_channels=192, out_channels=64, kernel_size=3, stride=1, padding=1)
-        # self.M5=CONV_BN_RELU(in_channels=192, out_channels=64, kernel_size=3, stride=1, padding=1)
-        # self.M6=CONV_BN_RELU(in_channels=192, out_channels=64, kernel_size=3, stride=1, padding=1)
-        # self.M7=CONV_BN_RELU(in_channels=192, out_channels=64, kernel_size=3, stride=1, padding=1)
-        # self.M8=nn.Conv2d(in_channels=70, out_channels=3, kernel_size=3, stride=1, padding=1)
-        self.M4=nn.Conv2d(in_channels=70, out_channels=3, kernel_size=3, stride=1, padding=1)
+        self.M4=CONV_BN_RELU(in_channels=192, out_channels=64, kernel_size=3, stride=1, padding=1)
+        self.M5=CONV_BN_RELU(in_channels=192, out_channels=64, kernel_size=3, stride=1, padding=1)
+        self.M6=CONV_BN_RELU(in_channels=192, out_channels=64, kernel_size=3, stride=1, padding=1)
+        self.M7=CONV_BN_RELU(in_channels=192, out_channels=64, kernel_size=3, stride=1, padding=1)
+        self.M8=nn.Conv2d(in_channels=70, out_channels=3, kernel_size=3, stride=1, padding=1)
+        # self.M4=nn.Conv2d(in_channels=70, out_channels=3, kernel_size=3, stride=1, padding=1)
         #self.M9=nn.BatchNorm2d(3)
         
         nn.init.kaiming_normal_(self.M1.conv.weight, a=0, mode='fan_in', nonlinearity='relu')
         nn.init.kaiming_normal_(self.M2.conv.weight, a=0, mode='fan_in', nonlinearity='relu')
         nn.init.kaiming_normal_(self.M3.conv.weight, a=0, mode='fan_in', nonlinearity='relu')
-        # nn.init.kaiming_normal_(self.M4.conv.weight, a=0, mode='fan_in', nonlinearity='relu')
-        # nn.init.kaiming_normal_(self.M5.conv.weight, a=0, mode='fan_in', nonlinearity='relu')
-        # nn.init.kaiming_normal_(self.M6.conv.weight, a=0, mode='fan_in', nonlinearity='relu')
-        # nn.init.kaiming_normal_(self.M7.conv.weight, a=0, mode='fan_in', nonlinearity='relu')
-        # nn.init.kaiming_normal_(self.M8.weight, a=0, mode='fan_in', nonlinearity='relu')
-        nn.init.kaiming_normal_(self.M4.weight, a=0, mode='fan_in', nonlinearity='relu')
+        nn.init.kaiming_normal_(self.M4.conv.weight, a=0, mode='fan_in', nonlinearity='relu')
+        nn.init.kaiming_normal_(self.M5.conv.weight, a=0, mode='fan_in', nonlinearity='relu')
+        nn.init.kaiming_normal_(self.M6.conv.weight, a=0, mode='fan_in', nonlinearity='relu')
+        nn.init.kaiming_normal_(self.M7.conv.weight, a=0, mode='fan_in', nonlinearity='relu')
+        nn.init.kaiming_normal_(self.M8.weight, a=0, mode='fan_in', nonlinearity='relu')
+        # nn.init.kaiming_normal_(self.M4.weight, a=0, mode='fan_in', nonlinearity='relu')
 
-    def forward(self, x, mf1, mf2,mf3,mf4):
+    def forward(self, x, mf1, mf2,mf3,mf4,mf5,mf6,mf7,mf8):
         out=self.S1(x)
         # print(out.size())
         # print(mf1.size())
@@ -108,17 +108,17 @@ class MFD_C(nn.Module):
         mf3=self.M3(torch.cat([out,mf2,mf3],dim=1))
         out=self.S4(out)
         mf4=self.M4(torch.cat([out,mf3,mf4],dim=1))
-        # out=self.S5(out)
-        # mf5=self.M5(torch.cat([out,mf4,mf5],dim=1))
-        # out=self.S6(out)
-        # mf6=self.M6(torch.cat([out,mf5,mf6],dim=1))
-        # out=self.S7(out)
-        # mf7=self.M7(torch.cat([out,mf6,mf7],dim=1))
-        # out=self.S8(out)
+        out=self.S5(out)
+        mf5=self.M5(torch.cat([out,mf4,mf5],dim=1))
+        out=self.S6(out)
+        mf6=self.M6(torch.cat([out,mf5,mf6],dim=1))
+        out=self.S7(out)
+        mf7=self.M7(torch.cat([out,mf6,mf7],dim=1))
+        out=self.S8(out)
         # #out=self.S9(out)
-        # mf8=self.M8(torch.cat([out,mf7,mf8],dim=1))
+        mf8=self.M8(torch.cat([out,mf7,mf8],dim=1))
         #mf8 += x
         #out += x
         
-        # return out,mf1,mf2,mf3,mf4,mf5,mf6,mf7,mf8
-        return out,mf1,mf2,mf3,mf4
+        return out,mf1,mf2,mf3,mf4,mf5,mf6,mf7,mf8
+        # return out,mf1,mf2,mf3,mf4
