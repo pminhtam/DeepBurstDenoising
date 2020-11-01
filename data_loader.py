@@ -134,7 +134,7 @@ class MultiLoader(data.Dataset):
         self.noise_path = glob.glob(self.noise_dir + "/*")
         # for files_ext in IMG_EXTENSIONS:
         #     self.noise_path.extend(glob.glob(self.noise_dir + "/*" + files_ext))
-        self.gt_path = glob.glob(self.gt_dir + "/*")
+        # self.gt_path = glob.glob(self.gt_dir + "/*")
         # for files_ext in IMG_EXTENSIONS:
         #     self.gt_path.extend(glob.glob(self.gt_dir + "/*" + files_ext))
 
@@ -159,8 +159,9 @@ class MultiLoader(data.Dataset):
         list_path = sorted(glob.glob(path+"/*"))[:8]
 
 
-        name_image = self.noise_path[index].split("/")[-1].replace("NOISY_", "GT_")
-        image_gt = Image.open(os.path.join(self.gt_dir, name_image,name_image+"_001.PNG")).convert('RGB')
+        name_folder_image = self.list_path[0].split("/")[-2].replace("NOISY_", "GT_")
+        name_image = self.list_path[0].split("/")[-1].replace("NOISY_", "GT_")
+        image_gt = Image.open(os.path.join(self.gt_dir, name_folder_image,name_image)).convert('RGB')
         image_gt = self.transforms(image_gt)
         ############
         # Choose randcrop
