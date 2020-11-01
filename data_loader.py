@@ -159,8 +159,8 @@ class MultiLoader(data.Dataset):
         list_path = sorted(glob.glob(path+"/*"))[:8]
 
 
-        name_folder_image = self.list_path[0].split("/")[-2].replace("NOISY_", "GT_")
-        name_image = self.list_path[0].split("/")[-1].replace("NOISY_", "GT_")
+        name_folder_image = list_path[0].split("/")[-2].replace("NOISY_", "GT_")
+        name_image = list_path[0].split("/")[-1].replace("NOISY_", "GT_")
         image_gt = Image.open(os.path.join(self.gt_dir, name_folder_image,name_image)).convert('RGB')
         image_gt = self.transforms(image_gt)
         ############
