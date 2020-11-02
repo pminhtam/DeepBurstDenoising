@@ -73,7 +73,7 @@ def test_multi(noise_dir,gt_dir,image_size,num_workers,checkpoint,resume):
                     dframe, mf1, mf2, mf3, mf4,mf5, mf6, mf7, mf8 = model(
                         frame, mfinit1, mfinit2, mfinit3, mfinit4,mfinit5,mfinit6,mfinit7,mfinit8)
                 else:
-                    dframe, mf1, mf2, mf3, mf4,mf5, mf6, mf7, mf8= model(frame, mf1, mf2, mf3, mf4,mf5, mf6, mf7, mf8)
+                    dframe, mf1, mf2, mf3, mf4,mf5, mf6, mf7, mf8= model(dframe, mf1, mf2, mf3, mf4,mf5, mf6, mf7, mf8)
             # # print(np.array(trans(mf8[0])))
             # print(np.array(trans(dframe[0])).shape)
             # print(np.array(trans(image_gt[0])).shape)
