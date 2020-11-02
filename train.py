@@ -95,7 +95,7 @@ def train_multi(noise_dir,gt_dir,image_size,num_workers,batch_size,n_epoch,check
                     loss_mfd += loss_func(mf8, image_gt)
             loss = loss_sfd + loss_mfd
             if (step + 1) % loss_every == 0:
-                print('multi t = %d, loss = %.4f' % (step + 1, loss.data))
+                print('epoch %d  multi t = %d, loss = %.4f' % (epoch,step + 1, loss.data))
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
