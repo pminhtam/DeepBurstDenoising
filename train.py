@@ -6,7 +6,7 @@ from data_loader import SingleLoader,MultiLoader
 from torch.utils.data import DataLoader
 import torch.optim as optim
 
-def train_single(noise_dir,gt_dir,image_size,num_workers,batch_size,n_epoch,checkpoint,resume_single,loss_every,save_every):
+def train_single(noise_dir,gt_dir,image_size,num_workers,batch_size,n_epoch,checkpoint,resume_single,loss_every,save_every,learning_rate):
     if not os.path.isdir(checkpoint):
         os.mkdir(checkpoint)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -19,7 +19,7 @@ def train_single(noise_dir,gt_dir,image_size,num_workers,batch_size,n_epoch,chec
         model.load_state_dict(save_dict['state_dict'])
         epoch_start = save_dict['epoch']
     loss_func = nn.L1Loss().cuda()
-    optimizer = optim.Adam(model.parameters(), lr=0.001, betas=(0.9, 0.999), eps=1e-08, weight_decay=0.00001,
+    optimizer = optim.Adam(model.parameters(), lr=learning_rate, betas=(0.9, 0.999), eps=1e-08, weight_decay=0.00001,
                            amsgrad=False)
 
     for epoch in range(epoch_start,n_epoch):
@@ -44,7 +44,7 @@ def train_single(noise_dir,gt_dir,image_size,num_workers,batch_size,n_epoch,chec
             torch.save(save_dict, filename)
             # torch.save(model.state_dict(), filename)
 
-def train_multi(noise_dir,gt_dir,image_size,num_workers,batch_size,n_epoch,checkpoint,resume_single,resume_multi,loss_every,save_every):
+def train_multi(noise_dir,gt_dir,image_size,num_workers,batch_size,n_epoch,checkpoint,resume_single,resume_multi,loss_every,save_every,learning_rate):
     if not os.path.isdir(checkpoint):
         os.mkdir(checkpoint)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -64,7 +64,7 @@ def train_multi(noise_dir,gt_dir,image_size,num_workers,batch_size,n_epoch,check
     else:
         model = MFD_C(model_single).to(device)
     loss_func = nn.L1Loss().cuda()
-    optimizer = optim.Adam(model.parameters(), lr=0.00001, betas=(0.9, 0.999), eps=1e-08, weight_decay=0.00001,
+    optimizer = optim.Adam(model.parameters(), lr=learning_rate, betas=(0.9, 0.999), eps=1e-08, weight_decay=0.00001,
                            amsgrad=False)
     model.train()
     for epoch in range(epoch_start,n_epoch):
@@ -119,6 +119,7 @@ if __name__ == "__main__":
     parser.add_argument('--num_workers', '-nw', default=2, type=int, help='number of workers in data loader')
     parser.add_argument('--batch_size', '-bs', default=2, type=int, help='number of workers in data loader')
     parser.add_argument('--n_epoch', '-ep', default=8, type=int, help='number of workers in data loader')
+    parser.add_argument('--learning_rate', '-lr', default=0.001, type=float, help='number of workers in data loader')
     parser.add_argument('--loss_every', '-le', default=1, type=int, help='number of inter to print loss')
     parser.add_argument('--save_every', '-se', default=10, type=int, help='number of epoch to save checkpoint')
     parser.add_argument('--checkpoint', '-ckpt', type=str, default='checkpoint',
@@ -131,9 +132,9 @@ if __name__ == "__main__":
     args = parser.parse_args()
     #
     if args.type_model == 'single':
-        train_single(args.noise_dir,args.gt_dir,args.image_size,args.num_workers,args.batch_size,args.n_epoch,args.checkpoint,args.resume_single,args.loss_every,args.save_every)
+        train_single(args.noise_dir,args.gt_dir,args.image_size,args.num_workers,args.batch_size,args.n_epoch,args.checkpoint,args.resume_single,args.loss_every,args.save_every,args.learning_rate)
     elif args.type_model == 'multi':
-        train_multi(args.noise_dir,args.gt_dir,args.image_size,args.num_workers,args.batch_size,args.n_epoch,args.checkpoint,args.resume_single,args.resume_multi,args.loss_every,args.save_every)
+        train_multi(args.noise_dir,args.gt_dir,args.image_size,args.num_workers,args.batch_size,args.n_epoch,args.checkpoint,args.resume_single,args.resume_multi,args.loss_every,args.save_every,args.learning_rate)
 
 
 
