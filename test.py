@@ -7,6 +7,7 @@ from torch.utils.data import DataLoader
 import torch.optim as optim
 import matplotlib.pyplot as plt
 from metric import  psnr
+import torchvision.transforms as transforms
 
 def test_single(noise_dir,gt_dir,image_size,num_workers,checkpoint,resume):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -42,42 +43,48 @@ def test_multi(noise_dir,gt_dir,image_size,num_workers,checkpoint,resume):
     model_single = SFD_C().to(device)
     model = MFD_C(model_single).to(device)
     if resume != '':
-        with open(os.path.join(checkpoint,resume), 'rb') as f:
-            save_dict = torch.load(f)
-            model.load_state_dict(save_dict['state_dict'])
-            epoch_start = save_dict['epoch']
+        print(device)
+        save_dict = torch.load(os.path.join(checkpoint, resume), map_location=torch.device('cpu'))
+
+        # if device == "cpu":
+        #     save_dict = torch.load(os.path.join(checkpoint,resume),map_location=torch.device('cpu'))
+        # else:
+        #     save_dict = torch.load(os.path.join(checkpoint, resume))
+        model.load_state_dict(save_dict['state_dict'])
+    trans = transforms.ToPILImage()
     for step, (image_noise, image_gt) in enumerate(data_loader):
         image_noise_batch = image_noise.to(device)
         image_gt = image_gt.to(device)
         print(image_noise_batch.size())
         batch_size_i = image_noise_batch.size()[0]
-        mfinit1, mfinit2, mfinit3 = torch.zeros(3, 1, 64, image_size, image_size).to(device)
-        mfinit4 = torch.zeros(1, 3, image_size, image_size).to(device)
+        mfinit1, mfinit2, mfinit3,mfinit4,mfinit5,mfinit6,mfinit7 = torch.zeros(7, 1, 64, image_size, image_size).to(device)
+        mfinit8 = torch.zeros(1, 3, image_size, image_size).to(device)
         i = 0
         for i_burst in range(batch_size_i):
             frame = image_noise_batch[:,i_burst,:,:,:]
             print(frame.size())
             if i == 0:
                 i += 1
-                dframe, mf1, mf2, mf3, mf4 = model(
-                    frame, mfinit1, mfinit2, mfinit3, mfinit4)
+                dframe, mf1, mf2, mf3, mf4,mf5, mf6, mf7, mf8 = model(
+                    frame, mfinit1, mfinit2, mfinit3, mfinit4,mfinit5,mfinit6,mfinit7,mfinit8)
             else:
-                dframe, mf1, mf2, mf3, mf4= model(frame, mf1, mf2, mf3, mf4)
+                dframe, mf1, mf2, mf3, mf4,mf5, mf6, mf7, mf8= model(frame, mf1, mf2, mf3, mf4,mf5, mf6, mf7, mf8)
 
-
+        plt.imshow(np.array(trans(mf8[0])))
+        plt.show()
 
 if __name__ == "__main__":
     # argparse
     parser = argparse.ArgumentParser(description='parameters for training')
-    parser.add_argument('--noise_dir','-n', default='/home/dell/Downloads/FullTest/noisy', help='path to noise image file')
-    parser.add_argument('--gt_dir','-g',  default='/home/dell/Downloads/FullTest/clean', help='path to groud true image file')
+    parser.add_argument('--noise_dir','-n', default='/home/dell/Downloads/noise', help='path to noise image file')
+    parser.add_argument('--gt_dir','-g',  default='/home/dell/Downloads/gt', help='path to groud true image file')
     parser.add_argument('--image_size','-sz' , type=int,default=256, help='size of image')
     parser.add_argument('--num_workers', '-nw', default=4, type=int, help='number of workers in data loader')
     parser.add_argument('--checkpoint', '-ckpt', type=str, default='checkpoint',
                         help='the folder checkpoint to save')
-    parser.add_argument('--resume', '-r', type=str, default="SFD_C_0.pth.tar",
+    parser.add_argument('--resume', '-r', type=str, default="MFD_C_99.pth.tar",
                         help='file name of checkpoint')
-    parser.add_argument('--type_model', '-t', type=str, default='single',help='type model train is single or multi')
+    parser.add_argument('--type_model', '-t', type=str, default='multi',help='type model train is single or multi')
     args = parser.parse_args()
     #
     if args.type_model == 'single':
