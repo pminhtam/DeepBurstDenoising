@@ -57,11 +57,11 @@ def test_multi(dir,image_size,checkpoint,resume):
         image_noise = load_data(dir,image_size)
         image_noise_batch = image_noise.to(device)
         print(image_noise_batch.size())
-        batch_size_i = image_noise_batch.size()[0]
+        burst_size = image_noise_batch.size()[1]
         mfinit1, mfinit2, mfinit3,mfinit4,mfinit5,mfinit6,mfinit7 = torch.zeros(7, 1, 64, image_size, image_size).to(device)
         mfinit8 = torch.zeros(1, 3, image_size, image_size).to(device)
         i = 0
-        for i_burst in range(batch_size_i):
+        for i_burst in range(burst_size):
             frame = image_noise_batch[:,i_burst,:,:,:]
             print(frame.size())
             if i == 0:
