@@ -140,7 +140,7 @@ class MultiLoader(data.Dataset):
 
         if len(self.noise_path) == 0:
             raise (RuntimeError("Found 0 images in subfolders of: " + self.noise_dir + "\n"
-                                                                                       "Supported image extensions are: " + ",".join(
+                "Supported image extensions are: " + ",".join(
                 IMG_EXTENSIONS)))
 
         self.transforms = transforms.Compose([transforms.ToTensor()])
@@ -173,9 +173,16 @@ class MultiLoader(data.Dataset):
             raise RuntimeError("Image is to small {} for the desired size {}". \
                                format((image_gt.size(-1), image_gt.size(-2)), (w, h))
                                )
+        # print("nw  : ",nw)
+        # idx_w = np.random.choice(nw + 1)
+        idx_w = torch.randint(0,nw + 1,(1,))[0]
+        # idx_h = np.random.choice(nh + 1)
+        idx_h = torch.randint(0,nh + 1,(1,))[0]
 
-        idx_w = np.random.choice(nw + 1)
-        idx_h = np.random.choice(nh + 1)
+        # idx_w = torch.randint(nw + 1)
+        # idx_h = torch.randint(nh+1)
+        # print(idx_w)
+        # print(idx_h)
         ##########
         image_gt_crop = image_gt[:,idx_h:(idx_h+h), idx_w:(idx_w+w)]
 
