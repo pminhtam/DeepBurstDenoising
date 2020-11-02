@@ -21,8 +21,8 @@ def random_cut(image_noise,image_gt,w,h=None):
                            format((image_gt.size(-1), image_gt.size(-2)), (w, h))
                            )
 
-    idx_w = np.random.choice(nw + 1)
-    idx_h = np.random.choice(nh + 1)
+    idx_w = torch.randint(0, nw + 1, (1,))[0]
+    idx_h = torch.randint(0, nh + 1, (1,))[0]
     image_noise_burst_crop = image_noise[:,idx_h:(idx_h+h), idx_w:(idx_w+w)]
     image_gt_crop = image_gt[:,idx_h:(idx_h+h), idx_w:(idx_w+w)]
     return image_noise_burst_crop,image_gt_crop
@@ -103,20 +103,7 @@ def pixel_unshuffle(input, upscale_factor):
     unshuffle_out = input_view.permute(0, 2, 4, 1, 3).contiguous()
     return unshuffle_out.view(upscale_factor ** 2,channels, out_height, out_width)
 
-def random_cut_burst(image_noise_burst,image_gt,w,h=None):
-    h = w if h is None else h
-    nw = image_gt.size(-1) - w
-    nh = image_gt.size(-2) - h
-    if nw < 0 or nh < 0:
-        raise RuntimeError("Image is to small {} for the desired size {}". \
-                           format((image_gt.size(-1), image_gt.size(-2)), (w, h))
-                           )
 
-    idx_w = np.random.choice(nw + 1)
-    idx_h = np.random.choice(nh + 1)
-    image_noise_burst_crop = image_noise_burst[:,:,idx_h:(idx_h+h), idx_w:(idx_w+w)]
-    image_gt_crop = image_gt[:,idx_h:(idx_h+h), idx_w:(idx_w+w)]
-    return image_noise_burst_crop,image_gt_crop
 
 class MultiLoader(data.Dataset):
     """
