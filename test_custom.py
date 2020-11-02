@@ -72,7 +72,7 @@ def test_multi(dir,image_size,checkpoint,resume):
                 plt.title("denoise 0")
                 plt.show()
             else:
-                dframe, mf1, mf2, mf3, mf4,mf5, mf6, mf7, mf8= model(frame, mf1, mf2, mf3, mf4,mf5, mf6, mf7, mf8)
+                dframe, mf1, mf2, mf3, mf4,mf5, mf6, mf7, mf8= model(dframe, mf1, mf2, mf3, mf4,mf5, mf6, mf7, mf8)
         # print(np.array(trans(mf8[0])))
 
         plt.imshow(np.array(trans(dframe[0])))

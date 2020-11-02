@@ -89,7 +89,7 @@ def train_multi(noise_dir,gt_dir,image_size,num_workers,batch_size,n_epoch,check
                     loss_mfd = loss_func(mf8, image_gt)
 
                 else:
-                    dframe, mf1, mf2, mf3, mf4,mf5, mf6, mf7, mf8= model(frame, mf1, mf2, mf3, mf4,mf5, mf6, mf7, mf8)
+                    dframe, mf1, mf2, mf3, mf4,mf5, mf6, mf7, mf8= model(dframe, mf1, mf2, mf3, mf4,mf5, mf6, mf7, mf8)
                     loss_sfd += loss_func(dframe, image_gt)
                     loss_mfd += loss_func(mf8, image_gt)
             loss = loss_sfd + loss_mfd
