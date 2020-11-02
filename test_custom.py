@@ -12,7 +12,7 @@ import glob
 from PIL import Image
 
 def load_data(dir,image_size):
-    image_files = glob.glob(dir + "/*")
+    image_files = sorted(glob.glob(dir + "/*"))[:8]
     print(image_files)
     image_0 = Image.open(image_files[0]).convert('RGB')
     w = image_size
@@ -50,6 +50,7 @@ def test_multi(dir,image_size,checkpoint,resume):
         # else:
         #     save_dict = torch.load(os.path.join(checkpoint, resume))
         model.load_state_dict(save_dict['state_dict'])
+        # model= save_dict['state_dict']
     trans = transforms.ToPILImage()
     model.eval()
     for i in range(10):
@@ -67,22 +68,25 @@ def test_multi(dir,image_size,checkpoint,resume):
                 i += 1
                 dframe, mf1, mf2, mf3, mf4,mf5, mf6, mf7, mf8 = model(
                     frame, mfinit1, mfinit2, mfinit3, mfinit4,mfinit5,mfinit6,mfinit7,mfinit8)
-                plt.imshow(np.array(trans(dframe[0][0])))
+                plt.imshow(np.array(trans(dframe[0])))
+                plt.title("denoise 0")
                 plt.show()
             else:
                 dframe, mf1, mf2, mf3, mf4,mf5, mf6, mf7, mf8= model(frame, mf1, mf2, mf3, mf4,mf5, mf6, mf7, mf8)
         # print(np.array(trans(mf8[0])))
 
-        plt.imshow(np.array(trans(dframe[0][0])))
+        plt.imshow(np.array(trans(dframe[0])))
+        plt.title("denoise")
         plt.show()
         plt.imshow(np.array(trans(image_noise[0][0])))
+        plt.title("noise ")
         plt.show()
 
 if __name__ == "__main__":
     # argparse
     parser = argparse.ArgumentParser(description='parameters for training')
-    # parser.add_argument('--noise_dir','-n', default='/home/dell/Downloads/samples/samples', help='path to noise image file')
-    parser.add_argument('--noise_dir','-n', default='/home/dell/Downloads/noise/0001_NOISY_SRGB', help='path to noise image file')
+    parser.add_argument('--noise_dir','-n', default='/home/dell/Downloads/samples/samples', help='path to noise image file')
+    # parser.add_argument('--noise_dir','-n', default='/home/dell/Downloads/noise/0001_NOISY_SRGB', help='path to noise image file')
     parser.add_argument('--image_size','-sz' , type=int,default=128, help='size of image')
     parser.add_argument('--num_workers', '-nw', default=4, type=int, help='number of workers in data loader')
     parser.add_argument('--checkpoint', '-ckpt', type=str, default='checkpoint',
